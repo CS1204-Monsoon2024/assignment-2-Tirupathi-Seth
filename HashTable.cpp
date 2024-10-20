@@ -1,15 +1,19 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <limits>
 
 using namespace std;
+
+const int EMPTY = -1;        // Marker for empty slot
+const int DELETED = -2;      // Marker for deleted slot
 
 class HashTable {
 private:
     vector<int> table;
     int currentSize;
     int itemCount;
-    double loadFactorThreshold = 0.8; // Removed const to avoid assignment errors
+    double loadFactorThreshold = 0.8; // Load factor threshold for resizing
 
     // Helper function to find the next prime number (used for resizing)
     int nextPrime(int n) {
@@ -41,12 +45,12 @@ private:
     // Resize the hash table when load factor exceeds threshold
     void resize() {
         int newSize = nextPrime(2 * currentSize); // Ensure new size is prime
-        vector<int> newTable(newSize, -1); // New table with larger prime size
+        vector<int> newTable(newSize, EMPTY); // New table with larger prime size
         for (int i = 0; i < currentSize; ++i) {
-            if (table[i] != -1) { // Rehash existing keys
+            if (table[i] != EMPTY && table[i] != DELETED) { // Rehash existing keys
                 int newHash = table[i] % newSize;
                 int j = 0;
-                while (newTable[(newHash + j * j) % newSize] != -1) {
+                while (newTable[(newHash + j * j) % newSize] != EMPTY) {
                     j++; // Quadratic probing to find the next available slot
                 }
                 newTable[(newHash + j * j) % newSize] = table[i];
@@ -59,7 +63,7 @@ private:
 public:
     HashTable(int size) {
         currentSize = nextPrime(size);
-        table = vector<int>(currentSize, -1); // Initialize table with -1 (empty slots)
+        table = vector<int>(currentSize, EMPTY); // Initialize table with EMPTY
         itemCount = 0;
     }
 
@@ -70,7 +74,7 @@ public:
         }
         int hashValue = hash(key);
         int i = 0;
-        while (table[(hashValue + i * i) % currentSize] != -1) {
+        while (table[(hashValue + i * i) % currentSize] != EMPTY && table[(hashValue + i * i) % currentSize] != DELETED) {
             i++; // Quadratic probing in case of collision
         }
         table[(hashValue + i * i) % currentSize] = key;
@@ -82,7 +86,7 @@ public:
         int hashValue = hash(key);
         int i = 0;
         while (table[(hashValue + i * i) % currentSize] != key) {
-            if (table[(hashValue + i * i) % currentSize] == -1) return false; // Key not found
+            if (table[(hashValue + i * i) % currentSize] == EMPTY) return false; // Key not found
             i++;
             if (i == currentSize) return false; // Prevent infinite loop
         }
@@ -94,21 +98,23 @@ public:
         int hashValue = hash(key);
         int i = 0;
         while (table[(hashValue + i * i) % currentSize] != key) {
-            if (table[(hashValue + i * i) % currentSize] == -1) return; // Key not found
+            if (table[(hashValue + i * i) % currentSize] == EMPTY) return; // Key not found
             i++;
             if (i == currentSize) return; // Prevent infinite loop
         }
-        table[(hashValue + i * i) % currentSize] = -1; // Mark slot as empty
+        table[(hashValue + i * i) % currentSize] = DELETED; // Mark slot as DELETED
         itemCount--;
     }
 
     // Print the current state of the hash table
     void printTable() {
         for (int i = 0; i < currentSize; ++i) {
-            if (table[i] != -1)
-                cout << i << " --> " << table[i] << endl;
-            else
+            if (table[i] == EMPTY)
                 cout << i << " --> [empty]" << endl;
+            else if (table[i] == DELETED)
+                cout << i << " --> [deleted]" << endl;
+            else
+                cout << i << " --> " << table[i] << endl;
         }
     }
 };
