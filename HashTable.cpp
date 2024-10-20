@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include <limits>
 
 using namespace std;
 
@@ -106,15 +105,14 @@ public:
         itemCount--;
     }
 
-    // Print the current state of the hash table
+    // Print the current state of the hash table (formatted to match expected output)
     void printTable() {
         for (int i = 0; i < currentSize; ++i) {
-            if (table[i] == EMPTY)
-                cout << i << " --> [empty]" << endl;
-            else if (table[i] == DELETED)
-                cout << i << " --> [deleted]" << endl;
+            if (table[i] == EMPTY || table[i] == DELETED)
+                cout << "- "; // Print '-' for empty or deleted slots
             else
-                cout << i << " --> " << table[i] << endl;
+                cout << table[i] << " "; // Print the key value
         }
+        cout << endl;
     }
 };
