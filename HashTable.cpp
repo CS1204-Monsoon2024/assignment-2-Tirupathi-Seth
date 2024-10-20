@@ -9,7 +9,7 @@ private:
     vector<int> table;
     int currentSize;
     int itemCount;
-    const double loadFactorThreshold = 0.8;
+    double loadFactorThreshold = 0.8; // Removed const to avoid assignment errors
 
     // Helper function to find the next prime number (used for resizing)
     int nextPrime(int n) {
