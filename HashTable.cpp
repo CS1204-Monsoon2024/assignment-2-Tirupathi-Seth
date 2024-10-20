@@ -4,23 +4,21 @@
 
 using namespace std;
 
-const int EMPTY = -1;        // Marker for empty slot
-const int DELETED = -2;      // Marker for deleted slot
+const int EMPTY = -1;        
+const int DELETED = -2;     
 
 class HashTable {
 private:
     vector<int> table;
     int currentSize;
     int itemCount;
-    double loadFactorThreshold = 0.8; // Load factor threshold for resizing
+    double loadFactorThreshold = 0.8; 
 
-    // Helper function to find the next prime number (used for resizing)
     int nextPrime(int n) {
         while (!isPrime(n)) n++;
         return n;
     }
 
-    // Check if a number is prime
     bool isPrime(int n) {
         if (n <= 1) return false;
         if (n == 2 || n == 3) return true;
@@ -31,26 +29,23 @@ private:
         return true;
     }
 
-    // Hash function
     int hash(int key) {
         return key % currentSize;
     }
 
-    // Quadratic probing to resolve collisions
     int quadraticProbe(int key, int i) {
         return (hash(key) + i * i) % currentSize;
     }
 
-    // Resize the hash table when load factor exceeds threshold
     void resize() {
-        int newSize = nextPrime(2 * currentSize); // Ensure new size is prime
-        vector<int> newTable(newSize, EMPTY); // New table with larger prime size
+        int newSize = nextPrime(2 * currentSize); 
+        vector<int> newTable(newSize, EMPTY);
         for (int i = 0; i < currentSize; ++i) {
-            if (table[i] != EMPTY && table[i] != DELETED) { // Rehash existing keys
+            if (table[i] != EMPTY && table[i] != DELETED) { 
                 int newHash = table[i] % newSize;
                 int j = 0;
                 while (newTable[(newHash + j * j) % newSize] != EMPTY) {
-                    j++; // Quadratic probing to find the next available slot
+                    j++; 
                 }
                 newTable[(newHash + j * j) % newSize] = table[i];
             }
@@ -62,11 +57,10 @@ private:
 public:
     HashTable(int size) {
         currentSize = nextPrime(size);
-        table = vector<int>(currentSize, EMPTY); // Initialize table with EMPTY
+        table = vector<int>(currentSize, EMPTY); 
         itemCount = 0;
     }
 
-    // Insert a key into the hash table
     void insert(int key) {
         if ((double)itemCount / currentSize >= loadFactorThreshold) {
             resize();
@@ -74,44 +68,41 @@ public:
         int hashValue = hash(key);
         int i = 0;
         while (table[(hashValue + i * i) % currentSize] != EMPTY && table[(hashValue + i * i) % currentSize] != DELETED) {
-            i++; // Quadratic probing in case of collision
+            i++; 
         }
         table[(hashValue + i * i) % currentSize] = key;
         itemCount++;
     }
 
-    // Search for a key in the hash table
     int search(int key) {
         int hashValue = hash(key);
         int i = 0;
         while (table[(hashValue + i * i) % currentSize] != key) {
-            if (table[(hashValue + i * i) % currentSize] == EMPTY) return -1; // Key not found, return -1
+            if (table[(hashValue + i * i) % currentSize] == EMPTY) return -1; 
             i++;
-            if (i == currentSize) return -1; // Prevent infinite loop, return -1 if not found
+            if (i == currentSize) return -1; 
         }
-        return (hashValue + i * i) % currentSize; // Return index where the key is found
+        return (hashValue + i * i) % currentSize; 
     }
 
-    // Delete a key from the hash table
     void remove(int key) {
         int hashValue = hash(key);
         int i = 0;
         while (table[(hashValue + i * i) % currentSize] != key) {
-            if (table[(hashValue + i * i) % currentSize] == EMPTY) return; // Key not found
+            if (table[(hashValue + i * i) % currentSize] == EMPTY) return; 
             i++;
-            if (i == currentSize) return; // Prevent infinite loop
+            if (i == currentSize) return; 
         }
-        table[(hashValue + i * i) % currentSize] = DELETED; // Mark slot as DELETED
+        table[(hashValue + i * i) % currentSize] = DELETED; 
         itemCount--;
     }
 
-    // Print the current state of the hash table (formatted to match expected output)
     void printTable() {
         for (int i = 0; i < currentSize; ++i) {
             if (table[i] == EMPTY || table[i] == DELETED)
-                cout << "- "; // Print '-' for empty or deleted slots
+                cout << "- "; 
             else
-                cout << table[i] << " "; // Print the key value
+                cout << table[i] << " "; 
         }
         cout << endl;
     }
