@@ -81,15 +81,15 @@ public:
     }
 
     // Search for a key in the hash table
-    bool search(int key) {
+    int search(int key) {
         int hashValue = hash(key);
         int i = 0;
         while (table[(hashValue + i * i) % currentSize] != key) {
-            if (table[(hashValue + i * i) % currentSize] == EMPTY) return false; // Key not found
+            if (table[(hashValue + i * i) % currentSize] == EMPTY) return -1; // Key not found, return -1
             i++;
-            if (i == currentSize) return false; // Prevent infinite loop
+            if (i == currentSize) return -1; // Prevent infinite loop, return -1 if not found
         }
-        return true; // Key found
+        return (hashValue + i * i) % currentSize; // Return index where the key is found
     }
 
     // Delete a key from the hash table
