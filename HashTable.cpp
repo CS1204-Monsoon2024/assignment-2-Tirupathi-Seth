@@ -112,30 +112,3 @@ public:
         }
     }
 };
-
-int main() {
-    HashTable ht(7); // Initialize hash table with size 7 (a small prime)
-
-    // Insert keys
-    ht.insert(10);
-    ht.insert(20);
-    ht.insert(30);
-    ht.insert(40);
-    ht.insert(50);
-
-    // Print hash table
-    cout << "Hash Table After Insertions:\n";
-    ht.printTable();
-
-    // Search for keys
-    cout << "\nSearch for key 30: " << (ht.search(30) ? "Found" : "Not Found") << endl;
-    cout << "Search for key 60: " << (ht.search(60) ? "Found" : "Not Found") << endl;
-
-    // Remove a key
-    ht.remove(30);
-    cout << "\nHash Table After Deletion of Key 30:\n";
-    ht.printTable();
-
-    return 0;
-}
-
